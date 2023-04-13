@@ -120,9 +120,9 @@ public class FourCloverConverter
         var messageSplit = message.Split(" ");
         var messageHasUrl = UrlConverterHelper.GetFccUrl(message, out _);
         var constructedMessage =
-            message == "/fcc" ? 
+            message == _commandHead ? 
                 message + $" {_defaultConvertTo}" : 
-                messageSplit.FirstOrDefault() == "/fcc" 
+                messageSplit.FirstOrDefault() == _commandHead 
                 && messageHasUrl
                 && !MediaTypes.MediaTypeList.Contains(messageSplit.LastOrDefault() ?? "") ? 
                     message + $" {_defaultConvertTo}" : 
@@ -131,7 +131,7 @@ public class FourCloverConverter
         var containsConvertToType = MediaTypes.MediaTypeList.Contains(constructedMessageSplit.LastOrDefault() ?? "");
         convertTo = constructedMessageSplit.LastOrDefault() ?? "";
         if ((constructedMessageSplit.Length is 1 or 2 || (messageHasUrl && constructedMessageSplit.Length is 2 or 3))
-            && constructedMessageSplit.FirstOrDefault() == "/fcc" 
+            && constructedMessageSplit.FirstOrDefault() == _commandHead
             && containsConvertToType)
         {
             return true;
