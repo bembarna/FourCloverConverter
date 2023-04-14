@@ -36,7 +36,7 @@ public static class UrlConverterHelper
         return false;
     }
     
-    public static async Task<MemoryStream?> ConvertAsync(string url, string convertTo, string convertFrom)
+    public static async Task<MemoryStream?> ConvertAsync(string url, string convertTo, string convertFrom, string ffmpegPath)
     {
         var fileStream = new MemoryStream();
         if (!CanBuildFfmpegArgsCommand(convertTo, convertFrom, url, out var args))
@@ -46,13 +46,15 @@ public static class UrlConverterHelper
         
         var ffmpegProcess = new Process
         {
+            
             StartInfo =
             {
-                FileName = "ffmpeg",
+                FileName = ffmpegPath + "\\ffmpeg.exe",
                 Arguments = args,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
+                WorkingDirectory = ffmpegPath
             },
         };
         ffmpegProcess.Start();

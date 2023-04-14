@@ -16,11 +16,12 @@ public class FourCloverConverter
     private string _defaultConvertTo;
     private string _commandHead;
     private string _botName;
+    private string _ffmpegPath;
     
     //log channel info
     private SocketTextChannel LogChannel;
 
-    public async Task Init(string token, string defaultConvertTo, string defaultCommandHead, string botName)
+    public async Task Init(string token, string defaultConvertTo, string defaultCommandHead, string botName, string ffmpegPath)
     {
         _defaultConvertTo = defaultConvertTo;
         _commandHead = defaultCommandHead;
@@ -28,6 +29,7 @@ public class FourCloverConverter
         _client = new DiscordSocketClient(new DiscordSocketConfig{GatewayIntents = GatewayIntents.All});
         _clientHelper = new DiscordSocketClientHelper(_client);
         _commands = new CommandService();
+        _ffmpegPath = ffmpegPath;
 
         _services = new ServiceCollection()
             .AddSingleton(_client)
@@ -187,7 +189,7 @@ public class FourCloverConverter
         foreach (var attachmentUrl in attachmentUrls)
         {
             UrlConverterHelper.UrlIsFccSupported(attachmentUrl, out var convertFrom);
-            var fileStream = await UrlConverterHelper.ConvertAsync(attachmentUrl, convertTo, convertFrom);
+            var fileStream = await UrlConverterHelper.ConvertAsync(attachmentUrl, convertTo, convertFrom, _ffmpegPath);
             if (fileStream == null)
             {
                 var textChannel = _client.GetChannel(messageChannelId) as SocketTextChannel;
@@ -220,7 +222,7 @@ public class FourCloverConverter
         
         var convertingMessage = await _clientHelper.SendMessageFromMessageChannelId(messageChannelId, "Attempting Conversion...");
         
-        var fileStream = await UrlConverterHelper.ConvertAsync(url, convertTo, convertFrom);
+        var fileStream = await UrlConverterHelper.ConvertAsync(url, convertTo, convertFrom, _ffmpegPath);
         if (fileStream == null)
         {
             var textChannel = _client.GetChannel(messageChannelId) as SocketTextChannel;
