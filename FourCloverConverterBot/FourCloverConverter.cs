@@ -80,7 +80,7 @@ public class FourCloverConverter
     {
         if (message.Content.Length >= _commandHead.Length && message.Content.Substring(0, _commandHead.Length).Equals(_commandHead))
         {
-            if (CheckForFourCloverConverterCommand(message.ToString(), out var convertTo))
+            if (CheckForConverterCommand(message.ToString(), out var convertTo))
             {
                 if (UrlConverterHelper.GetFccUrl(message.Content, out var url) && UrlConverterHelper.UrlIsFccSupported(url, out var convertFrom))
                 {
@@ -93,30 +93,30 @@ public class FourCloverConverter
             }
             else if (message.Content == $"{_commandHead} help")
             {
-                await FourCloverHelpCommand(message);
+                await HelpCommand(message);
             }
             else
             {
-                await FourCloverInvalidCommandInput(message);
+                await InvalidCommandInput(message);
             }
         }
     }
 
-    private async Task FourCloverHelpCommand(SocketUserMessage socketUserMessage)
+    private async Task HelpCommand(SocketUserMessage socketUserMessage)
     {
         await _clientHelper.SendMessageFromMessageChannelId(
             socketUserMessage.Channel.Id,
             MessageHelper.GetHelpMessage(_botName, _commandHead, _defaultConvertTo));
     }
     
-    private async Task FourCloverInvalidCommandInput(SocketUserMessage socketUserMessage)
+    private async Task InvalidCommandInput(SocketUserMessage socketUserMessage)
     {
         await _clientHelper.SendMessageFromMessageChannelId(
             socketUserMessage.Channel.Id,
             $@"Issue with processing command, if you need help, please use ""{_commandHead} help"".");
     }
 
-    private bool CheckForFourCloverConverterCommand(string message, out string convertTo)
+    private bool CheckForConverterCommand(string message, out string convertTo)
     {
         message = message.TrimEnd();
         var messageSplit = message.Split(" ");
@@ -237,7 +237,7 @@ public class FourCloverConverter
             uniqueFileName, 
             $".{convertTo}", 
             $"Meme converted from {convertFrom} to {convertTo}", 
-            "Here is your shit dood.",
+            "",
             "File too big dood...");
 
         if (fileSent && convertingMessage is not null)
